@@ -1,0 +1,12 @@
+---
+description: Mock services with hardcoded demo data in SwissSystem.Services
+globs: "SwissSystem.WebApp/Services/**/*.cs"
+alwaysApply: false
+---
+
+# SwissSystem.Services — Mock Services
+
+- **Location**: All mock/demo implementations live under **`SwissSystem.WebApp/Services/`**. Create interfaces and classes there as needed (e.g. `ITournamentService`, `TournamentMockService`).
+- **Hardcoded demo data**: Implementations return in-memory, hardcoded data. No database, no `DbContext`, no real DAL. Use static lists or simple object graphs that match **SwissSystem.Models** types.
+- **Match SwissSystem.Models**: Service method return types and parameters must use types from **SwissSystem.Models**. Create new model types only in that project and only after asking; do not add model-like classes inside SwissSystem.WebApp/Services.
+- **Register in WebApp**: Register mock services in `Program.cs` (e.g. `AddScoped<ITournamentService, TournamentMockService>()`) so views receive them via injection. Do not change DAL or backend registration for this; only add or adjust service registration for the mocks.

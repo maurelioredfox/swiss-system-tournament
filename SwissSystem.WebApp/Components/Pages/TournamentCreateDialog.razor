@@ -1,0 +1,41 @@
+@using MudBlazor
+@using SwissSystem.WebApp.Models
+@using SwissSystem.WebApp.Services
+@inject ITournamentService TournamentService
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField Label="Nome"
+                      @bind-Value="model.Name"
+                      Required="true"
+                      Immediate="true" />
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton Variant="Variant.Text" OnClick="Cancel">Cancelar</MudButton>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   OnClick="Save">
+            Salvar
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private Tournament model = new();
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private async Task Save()
+    {
+        if (string.IsNullOrWhiteSpace(model.Name))
+            return;
+
+        await TournamentService.AddTournamentAsync(model.Name);
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+}

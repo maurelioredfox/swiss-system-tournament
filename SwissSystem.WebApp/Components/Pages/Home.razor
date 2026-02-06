@@ -1,0 +1,46 @@
+﻿@page "/"
+@using SwissSystem.WebApp.DAL.Repositories.Interfaces
+@using SwissSystem.WebApp.Models
+@inject ITournamentRepository TournamentRepo
+@inject IJSRuntime Js
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @if (_tournaments.Any())
+                        {
+                            foreach (var tournament in _tournaments)
+                            {
+                                <tr>
+                                    <td>@tournament.TournamentId</td>
+                                    <td>@tournament.Name</td>
+                                </tr>
+                            }
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code{
+    
+    List<Tournament> _tournaments = [];
+    protected override async Task OnInitializedAsync()
+    {
+        _tournaments = await TournamentRepo.GetAllAsync();
+    }
+}

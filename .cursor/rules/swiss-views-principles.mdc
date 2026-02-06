@@ -1,0 +1,30 @@
+---
+description: Core principles for SwissSystem WebApp — views only, mocks, Blazor/MudBlazor, no backend edits
+alwaysApply: true
+---
+
+# SwissSystem WebApp — Core Principles
+
+1. **Views only**  
+   Focus only on the UI layer. All data and behavior for views must come from **services** (no direct `DbContext`, repositories, or backend in pages).
+
+2. **Mocked services with demo data**  
+   Put all data access behind services living in **`SwissSystem.WebApp/Services/`**. Implement these as mocked services with **hardcoded pre populated static lists**. Create new service interfaces and classes in that directory when needed.
+
+3. **Blazor + MudBlazor**  
+   Build views with Blazor (Razor components) and use **MudBlazor** for UI (MudTable, MudButton, MudDialog, etc.).
+
+4. **Compatibility with SwissSystem.Models**  
+   Views and services must bind to and use types from **SwissSystem.Models**. Do not introduce view-specific DTOs that conflict with those models. If a type does not exist in SwissSystem.Models, add it there only after asking.
+
+5. **Do not edit models or backend**  
+   Do **not** modify:
+   - `SwissSystem.WebApp/Models/**`
+   - `SwissSystem.WebApp/DAL/**`
+   - `SwissSystem.WebApp/Migrations/**`, or other backend/data code  
+   If something in the views or mocks would require a model or backend change, or might cause incompatibility, **ask before making that change**.
+   **Do** modify:
+   - `SwissSystem.WebApp/Service/**`, to create missing interfaces and mock services or expand existing ones
+
+6. **Language**  
+   Write all **code** (identifiers, comments, commit messages) in **English**. Write all **user-facing text** (labels, buttons, messages, placeholders, page titles) in **Brazilian Portuguese** (pt-BR).

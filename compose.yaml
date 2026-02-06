@@ -1,0 +1,7 @@
+﻿services:
+  swisssystem.webapp:
+    image: swisssystem.webapp
+    build:
+      context: .
+      dockerfile: SwissSystem.WebApp/Dockerfile
+

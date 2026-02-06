@@ -1,0 +1,13 @@
+---
+description: Blazor and MudBlazor conventions for SwissSystem views
+globs: "**/*.razor"
+alwaysApply: false
+---
+
+# Blazor & MudBlazor View Conventions
+
+- **Use MudBlazor** for layout and controls: `MudPaper`, `MudStack`, `MudTable`, `MudButton`, `MudDialog`, `MudText`, `MudIconButton`, etc.
+- **Inject services, not data access**: Pages must `@inject` only service interfaces (from `SwissSystem.Services`), never `AppDbContext`, `DbContext`, or repositories directly.
+- **Bind to SwissSystem.Models**: Use types from `SwissSystem.Models` (or the project’s shared models) for `@code` properties and method parameters. Do not duplicate or redefine those types in the WebApp.
+- **InteractiveServer** where needed: Use `@rendermode InteractiveServer` for pages that need interactivity (buttons, dialogs, etc.).
+- Keep `@using` for `MudBlazor` and the services/models namespaces; avoid `Microsoft.EntityFrameworkCore` or DAL namespaces in view files.

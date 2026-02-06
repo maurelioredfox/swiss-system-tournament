@@ -1,0 +1,116 @@
+@page "/tournament"
+@rendermode InteractiveServer
+@using MudBlazor
+@using SwissSystem.WebApp.Models
+@using SwissSystem.WebApp.Services
+@inject ITournamentService TournamentService
+@inject IDialogService DialogService
+@inject NavigationManager Navigation
+
+<MudPaper Class="pa-4">
+
+    <MudStack Row="true" Class="mb-4">
+        <MudText Typo="Typo.h5">Torneios</MudText>
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   OnClick="OpenCreateDialog">
+            Novo torneio
+        </MudButton>
+    </MudStack>
+
+    <MudTable Items="tournaments" Hover="true" Dense="true">
+        <HeaderContent>
+            <MudTh>Nome</MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+
+        <RowTemplate>
+            <MudTd>@context.Name</MudTd>
+            <MudTd align="Align.Right">
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Size="Size.Small"
+                           StartIcon="@Icons.Material.Filled.Settings"
+                           OnClick="@(() => GoToManage(context.TournamentId))">
+                    Gerenciar
+                </MudButton>
+                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                               Color="Color.Error"
+                               OnClick="@(() => ConfirmDelete(context))"
+                               title="Excluir torneio" />
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+
+</MudPaper>
+
+@code {
+    private List<Tournament> tournaments = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Load();
+    }
+
+    private async Task Load()
+    {
+        tournaments = (await TournamentService.GetAllTournamentsAsync()).ToList();
+    }
+
+    private async Task OpenCreateDialog()
+    {
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.Small,
+            FullWidth = true
+        };
+
+        var dialogReference = await DialogService.ShowAsync<TournamentCreateDialog>(
+            "Novo torneio",
+            options);
+
+        var result = await dialogReference.Result;
+
+        if (result is { Canceled: false })
+            await Load();
+    }
+
+    private void GoToManage(int tournamentId)
+    {
+        Navigation.NavigateTo($"/tournament/{tournamentId}/manage");
+    }
+
+    private async Task ConfirmDelete(Tournament tournament)
+    {
+        var parameters = new DialogParameters<ConfirmDialog>
+        {
+            { x => x.ContentText, $"Excluir '{tournament.Name}'?" },
+            { x => x.ButtonText, "Excluir" },
+            { x => x.Color, Color.Error }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            CloseButton = true,
+            BackdropClick = false,
+            MaxWidth = MaxWidth.ExtraSmall
+        };
+
+        var dialogReference = await DialogService.ShowAsync<ConfirmDialog>(
+            "Confirmar",
+            parameters,
+            options);
+
+        var result = await dialogReference.Result;
+
+        if (result is { Canceled: false })
+        {
+            await TournamentService.DeleteTournamentAsync(tournament);
+            await Load();
+        }
+    }
+}

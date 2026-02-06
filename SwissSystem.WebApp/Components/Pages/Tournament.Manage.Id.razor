@@ -1,0 +1,146 @@
+@page "/tournament/{TournamentId:int}/manage"
+@rendermode InteractiveServer
+@using MudBlazor
+@using SwissSystem.WebApp.Models
+@using SwissSystem.WebApp.Services
+@inject ITournamentService TournamentService
+@inject IDialogService DialogService
+@inject NavigationManager Navigation
+
+<MudPaper Class="pa-4">
+    <MudStack Row="true" Class="mb-4" Justify="Justify.SpaceBetween">
+        <MudStack Row="true" Spacing="2">
+            <MudIconButton Icon="@Icons.Material.Filled.ArrowBack"
+                           Color="Color.Default"
+                           OnClick="GoBack"
+                           title="Voltar" />
+            <MudText Typo="Typo.h5">@(Tournament?.Name ?? "Gerenciar torneio")</MudText>
+        </MudStack>
+    </MudStack>
+
+    @if (Tournament is null)
+    {
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-4" />
+        <MudText>Carregando...</MudText>
+    }
+    else
+    {
+        <MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-4">
+            <MudTabPanel Text="Jogadores" Icon="@Icons.Material.Filled.People">
+                <MudStack Class="mt-2">
+                    <MudStack Row="true" Justify="Justify.FlexEnd">
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Add"
+                                   OnClick="OpenAddPlayerDialog">
+                            Adicionar jogador
+                        </MudButton>
+                    </MudStack>
+                    <MudTable Items="players" Hover="true" Dense="true" Breakpoint="Breakpoint.Sm">
+                        <HeaderContent>
+                            <MudTh>Nome</MudTh>
+                            <MudTh Style="width: 80px;"></MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd>@context.Name</MudTd>
+                            <MudTd align="Align.Right">
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                               Color="Color.Error"
+                                               OnClick="@(() => ConfirmRemovePlayer(context))"
+                                               title="Remover jogador" />
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </MudStack>
+            </MudTabPanel>
+            <MudTabPanel Text="Fase Suíça" Icon="@Icons.Material.Filled.FormatListNumbered">
+                <MudText Class="mt-4">Em breve.</MudText>
+            </MudTabPanel>
+            <MudTabPanel Text="Chave final" Icon="@Icons.Material.Filled.EmojiEvents">
+                <MudText Class="mt-4">Em breve.</MudText>
+            </MudTabPanel>
+        </MudTabs>
+    }
+</MudPaper>
+
+@code {
+    [Parameter]
+    public int TournamentId { get; set; }
+
+    private Tournament? Tournament { get; set; }
+    private List<Player> players = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTournament();
+    }
+
+    private async Task LoadTournament()
+    {
+        Tournament = await TournamentService.GetTournamentWithPlayersAsync(TournamentId);
+
+        if (Tournament != null)
+            players = Tournament.Players?.OrderBy(p => p.Name).ToList() ?? new List<Player>();
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/tournament");
+    }
+
+    private async Task OpenAddPlayerDialog()
+    {
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.Small,
+            FullWidth = true
+        };
+
+        var parameters = new DialogParameters<PlayerAddDialog>
+        {
+            { x => x.TournamentId, TournamentId }
+        };
+
+        var dialogReference = await DialogService.ShowAsync<PlayerAddDialog>(
+            "Adicionar jogador",
+            parameters,
+            options);
+
+        var result = await dialogReference.Result;
+
+        if (result is { Canceled: false })
+            await LoadTournament();
+    }
+
+    private async Task ConfirmRemovePlayer(Player player)
+    {
+        var parameters = new DialogParameters<ConfirmDialog>
+        {
+            { x => x.ContentText, $"Remover jogador '{player.Name}'?" },
+            { x => x.ButtonText, "Remover" },
+            { x => x.Color, Color.Error }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            CloseButton = true,
+            BackdropClick = false,
+            MaxWidth = MaxWidth.ExtraSmall
+        };
+
+        var dialogReference = await DialogService.ShowAsync<ConfirmDialog>(
+            "Confirmar",
+            parameters,
+            options);
+
+        var result = await dialogReference.Result;
+
+        if (result is { Canceled: false })
+        {
+            await TournamentService.RemovePlayerAsync(player);
+            await LoadTournament();
+        }
+    }
+}
