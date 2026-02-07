@@ -28,6 +28,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddTransient<ITournamentRepository, TournamentRepository>();
 builder.Services.AddScoped<ITournamentService, TournamentMockService>();
+builder.Services.AddScoped<IRoundService, RoundMockService>();
+builder.Services.AddScoped<IScoresService, ScoresMockService>();
+builder.Services.AddScoped<IFinalsService, FinalsMockService>();
 
 var app = builder.Build();
 

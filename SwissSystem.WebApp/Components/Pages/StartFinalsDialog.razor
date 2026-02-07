@@ -1,0 +1,108 @@
+@using MudBlazor
+@using SwissSystem.WebApp.Models
+@using SwissSystem.WebApp.Services
+@inject IScoresService ScoresService
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Iniciar chave final</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudText Class="mb-3">Classificação (use as setas para ajustar os 4 primeiros):</MudText>
+        @if (_loading)
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-2" />
+        }
+        else
+        {
+            <MudTable Items="_ordered" Hover="true" Dense="true" Breakpoint="Breakpoint.Sm" Striped="true">
+                <HeaderContent>
+                    <MudTh>Nome</MudTh>
+                    <MudTh Style="width: 80px;" Align="Align.Center">Pontos</MudTh>
+                    <MudTh Style="width: 80px;" Align="Align.Center">Buchholz</MudTh>
+                    <MudTh Style="width: 100px;" Align="Align.Center">Ordem</MudTh>
+                </HeaderContent>
+                <RowTemplate Context="item">
+                    <MudTd>
+                        @if (_ordered.IndexOf(item) < 4)
+                        {
+                            <MudChip T="string" Size="Size.Small" Color="Color.Primary" Class="me-1">Top 4</MudChip>
+                        }
+                        @item.PlayerName
+                    </MudTd>
+                    <MudTd Align="Align.Center">@item.Score</MudTd>
+                    <MudTd Align="Align.Center">@item.Buchholz</MudTd>
+                    <MudTd Align="Align.Center">
+                        <MudStack Row="true" Spacing="0" Justify="Justify.Center">
+                            <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward"
+                                           Size="Size.Small"
+                                           OnClick="@(() => MoveUp(item))"
+                                           Disabled="@(IsFirst(item))"
+                                           title="Subir" />
+                            <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward"
+                                           Size="Size.Small"
+                                           OnClick="@(() => MoveDown(item))"
+                                           Disabled="@(IsLast(item))"
+                                           title="Descer" />
+                        </MudStack>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Text" OnClick="Cancel">Cancelar</MudButton>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Disabled="@(_loading || _ordered.Count < 4)"
+                   OnClick="ConfirmStart">
+            Iniciar Finais
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public int TournamentId { get; set; }
+
+    private bool _loading = true;
+    private List<PlayerScoreView> _ordered = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var scores = await ScoresService.GetScoresAsync(TournamentId);
+        _ordered = (scores.PlayerScores ?? new List<PlayerScoreView>()).ToList();
+        _loading = false;
+    }
+
+    private bool IsFirst(PlayerScoreView item) => _ordered.IndexOf(item) <= 0;
+    private bool IsLast(PlayerScoreView item) => _ordered.IndexOf(item) >= _ordered.Count - 1;
+
+    private void MoveUp(PlayerScoreView item)
+    {
+        var i = _ordered.IndexOf(item);
+        if (i <= 0) return;
+        (_ordered[i - 1], _ordered[i]) = (_ordered[i], _ordered[i - 1]);
+        StateHasChanged();
+    }
+
+    private void MoveDown(PlayerScoreView item)
+    {
+        var i = _ordered.IndexOf(item);
+        if (i < 0 || i >= _ordered.Count - 1) return;
+        (_ordered[i], _ordered[i + 1]) = (_ordered[i + 1], _ordered[i]);
+        StateHasChanged();
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private void ConfirmStart()
+    {
+        if (_ordered.Count < 4) return;
+        var top4Ids = _ordered.Take(4).Select(p => p.PlayerId).ToList();
+        MudDialog.Close(DialogResult.Ok(top4Ids));
+    }
+}

@@ -32,7 +32,7 @@ public sealed class TournamentMockService : ITournamentService
 
     private static void AddDemoPlayers(Tournament tournament)
     {
-        var names = new[] { "Ana Silva", "Bruno Costa", "Carlos Lima", "Diana Souza" };
+        var names = new[] { "Ana Silva", "Bruno Costa", "Carlos Lima", "Diana Souza", "Eduardo Santos", "Fernanda Oliveira", "Gabriel Pereira" };
         foreach (var name in names)
         {
             tournament.Players!.Add(new Player
