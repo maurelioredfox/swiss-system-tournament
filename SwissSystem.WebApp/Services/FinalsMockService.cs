@@ -1,4 +1,5 @@
 using SwissSystem.WebApp.Models;
+using SwissSystem.WebApp.Services.Interfaces;
 
 namespace SwissSystem.WebApp.Services;
 

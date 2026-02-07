@@ -13,7 +13,10 @@ public class TournamentRepository(AppDbContext dbContext) : ITournamentRepositor
 
     public async Task<Tournament?> GetByIdAsync(int id)
     {
-        return await dbContext.Tournaments.FirstOrDefaultAsync(t => t.TournamentId == id);
+        return await dbContext.Tournaments
+            .Include(t => t.Players)
+            .Include(t=>t.Rounds)
+            .FirstOrDefaultAsync(t => t.TournamentId == id);
     }
 
     public async Task<Tournament> AddAsync(Tournament entity)

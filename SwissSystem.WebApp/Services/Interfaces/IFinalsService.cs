@@ -1,4 +1,4 @@
-namespace SwissSystem.WebApp.Services;
+namespace SwissSystem.WebApp.Services.Interfaces;
 
 /// <summary>
 /// View model for displaying the elimination bracket (names and IDs for UI).

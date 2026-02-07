@@ -4,6 +4,7 @@ using SwissSystem.WebApp.DAL;
 using SwissSystem.WebApp.DAL.Repositories;
 using SwissSystem.WebApp.DAL.Repositories.Interfaces;
 using SwissSystem.WebApp.Services;
+using SwissSystem.WebApp.Services.Interfaces;
 using SwissSystem.WebApp;
 using SwissSystem.WebApp.Components;
 
