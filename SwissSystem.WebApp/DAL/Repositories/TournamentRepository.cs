@@ -16,12 +16,14 @@ public class TournamentRepository(AppDbContext dbContext) : ITournamentRepositor
         return await dbContext.Tournaments
             .Include(t => t.Players)
             .Include(t=>t.Rounds)
+                .ThenInclude(r=>r.Matches)
             .FirstOrDefaultAsync(t => t.TournamentId == id);
     }
 
     public async Task<Tournament> AddAsync(Tournament entity)
     {
         var result = await dbContext.Tournaments.AddAsync(entity);
+        await dbContext.SaveChangesAsync();
         return result.Entity;
     }
 

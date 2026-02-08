@@ -11,8 +11,8 @@ using SwissSystem.WebApp.DAL;
 namespace SwissSystem.WebApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260206213041_finals")]
-    partial class finals
+    [Migration("20260208144422_Finals")]
+    partial class Finals
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -75,7 +75,7 @@ namespace SwissSystem.WebApp.Migrations
 
                     b.HasIndex("WinnerId");
 
-                    b.ToTable("FinalsBracket");
+                    b.ToTable("FinalsBrackets");
                 });
 
             modelBuilder.Entity("SwissSystem.WebApp.Models.Match", b =>
@@ -108,7 +108,7 @@ namespace SwissSystem.WebApp.Migrations
 
                     b.HasIndex("WinnerId");
 
-                    b.ToTable("Match");
+                    b.ToTable("Matches");
                 });
 
             modelBuilder.Entity("SwissSystem.WebApp.Models.Player", b =>
@@ -130,7 +130,7 @@ namespace SwissSystem.WebApp.Migrations
 
                     b.HasIndex("TournamentId");
 
-                    b.ToTable("Player");
+                    b.ToTable("Players");
                 });
 
             modelBuilder.Entity("SwissSystem.WebApp.Models.Round", b =>
@@ -151,7 +151,7 @@ namespace SwissSystem.WebApp.Migrations
 
                     b.HasIndex("TournamentId");
 
-                    b.ToTable("Round");
+                    b.ToTable("Rounds");
                 });
 
             modelBuilder.Entity("SwissSystem.WebApp.Models.Tournament", b =>

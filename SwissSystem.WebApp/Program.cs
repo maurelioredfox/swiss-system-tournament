@@ -28,10 +28,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 
 builder.Services.AddTransient<ITournamentRepository, TournamentRepository>();
-builder.Services.AddScoped<ITournamentService, TournamentMockService>();
-builder.Services.AddScoped<IRoundService, RoundMockService>();
-builder.Services.AddScoped<IScoresService, ScoresMockService>();
-builder.Services.AddScoped<IFinalsService, FinalsMockService>();
+builder.Services.AddTransient<IPlayerRepository, PlayerRepository>();
+builder.Services.AddScoped<IRoundRepository, RoundRepository>();
+builder.Services.AddScoped<IMatchRepository, MatchRepository>();
+builder.Services.AddScoped<IFinalsBracketRepository, FinalsBracketRepository>();
+
+builder.Services.AddScoped<ITournamentService, TournamentService>();
+builder.Services.AddScoped<IRoundService, RoundService>();
+builder.Services.AddScoped<IScoresService, ScoresService>();
+builder.Services.AddScoped<IFinalsService, FinalsService>();
 
 var app = builder.Build();
 

@@ -14,7 +14,9 @@ public class Match
     
     public int Player1Id { get; set; }
     
-    public int Player2Id { get; set; }
+    public bool Bye { get; set; }
+    
+    public int? Player2Id { get; set; }
     
     public int? WinnerId { get; set; }
     
@@ -22,7 +24,7 @@ public class Match
     public virtual Player Player1 { get; set; }
     
     [ForeignKey("Player2Id")]
-    public virtual Player Player2 { get; set; }
+    public virtual Player? Player2 { get; set; }
     
     [ForeignKey("WinnerId")]
     public virtual Player? Winner { get; set; }

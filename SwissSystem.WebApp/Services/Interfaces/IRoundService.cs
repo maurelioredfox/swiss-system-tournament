@@ -8,4 +8,5 @@ public interface IRoundService
     Task<RoundView?> GetRoundAsync(int tournamentId, int roundId);
     Task<RoundView> GenerateNextRoundAsync(int tournamentId);
     Task SetMatchResultAsync(int tournamentId, int matchId, Result result);
+    Task DeleteLastRoundAsync(int tournamentId);
 }

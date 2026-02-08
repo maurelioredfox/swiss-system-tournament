@@ -26,4 +26,5 @@ public enum Result
     Pending,
     Player1Wins,
     Player2Wins,
+    Bye
 }

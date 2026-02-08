@@ -72,6 +72,13 @@
                         </MudStack>
                         <MudButton Variant="Variant.Filled"
                                    Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Remove"
+                                   Disabled="@(Tournament.Rounds.Count == 0)"
+                                   OnClick="@(() => ConfirmRemoveLastRound(Tournament))">
+                            Excluir ultima rodada
+                        </MudButton>
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
                                    StartIcon="@Icons.Material.Filled.Add"
                                    Disabled="@(!canGenerateNextRound)"
                                    OnClick="GenerateNextRound">
@@ -166,26 +173,26 @@
                                             <MudPaper Class="bracket-match pa-3" Elevation="2" Rounded="true">
                                                 <MudText Typo="Typo.caption" Class="mb-1" Style="opacity: 0.8;">Semi A</MudText>
                                                 <MudStack Spacing="1">
-                                                    @if (finalsBracket.SemiAPlayer1Id.HasValue)
+                                                    @if (finalsBracket.SemifinalsAPlayer1Id.HasValue)
                                                     {
                                                         <MudButton Variant="Variant.Text"
                                                                    FullWidth="true"
                                                                    Justify="Justify.FlexStart"
-                                                                   OnClick="@(() => SetSemiAWinner(finalsBracket.SemiAPlayer1Id!.Value))"
+                                                                   OnClick="@(() => SetSemiAWinner(finalsBracket.SemifinalsAPlayer1Id!.Value))"
                                                                    EndIcon="@Icons.Material.Filled.CheckCircle"
                                                                    title="Definir como vencedor">
-                                                            @(finalsBracket.SemiAPlayer1Name ?? "—")
+                                                            @(finalsBracket.SemifinalsAPlayer1?.Name ?? "—")
                                                         </MudButton>
                                                     }
-                                                    @if (finalsBracket.SemiAPlayer2Id.HasValue)
+                                                    @if (finalsBracket.SemifinalsAPlayer2Id.HasValue)
                                                     {
                                                         <MudButton Variant="Variant.Text"
                                                                    FullWidth="true"
                                                                    Justify="Justify.FlexStart"
-                                                                   OnClick="@(() => SetSemiAWinner(finalsBracket.SemiAPlayer2Id!.Value))"
+                                                                   OnClick="@(() => SetSemiAWinner(finalsBracket.SemifinalsAPlayer2Id!.Value))"
                                                                    EndIcon="@Icons.Material.Filled.CheckCircle"
                                                                    title="Definir como vencedor">
-                                                            @(finalsBracket.SemiAPlayer2Name ?? "—")
+                                                            @(finalsBracket.SemifinalsAPlayer2?.Name ?? "—")
                                                         </MudButton>
                                                     }
                                                 </MudStack>
@@ -193,26 +200,26 @@
                                             <MudPaper Class="bracket-match pa-3" Elevation="2" Rounded="true">
                                                 <MudText Typo="Typo.caption" Class="mb-1" Style="opacity: 0.8;">Semi B</MudText>
                                                 <MudStack Spacing="1">
-                                                    @if (finalsBracket.SemiBPlayer1Id.HasValue)
+                                                    @if (finalsBracket.SemifinalsBPlayer1Id.HasValue)
                                                     {
                                                         <MudButton Variant="Variant.Text"
                                                                    FullWidth="true"
                                                                    Justify="Justify.FlexStart"
-                                                                   OnClick="@(() => SetSemiBWinner(finalsBracket.SemiBPlayer1Id!.Value))"
+                                                                   OnClick="@(() => SetSemiBWinner(finalsBracket.SemifinalsBPlayer1Id!.Value))"
                                                                    EndIcon="@Icons.Material.Filled.CheckCircle"
                                                                    title="Definir como vencedor">
-                                                            @(finalsBracket.SemiBPlayer1Name ?? "—")
+                                                            @(finalsBracket.SemifinalsBPlayer1?.Name ?? "—")
                                                         </MudButton>
                                                     }
-                                                    @if (finalsBracket.SemiBPlayer2Id.HasValue)
+                                                    @if (finalsBracket.SemifinalsBPlayer2Id.HasValue)
                                                     {
                                                         <MudButton Variant="Variant.Text"
                                                                    FullWidth="true"
                                                                    Justify="Justify.FlexStart"
-                                                                   OnClick="@(() => SetSemiBWinner(finalsBracket.SemiBPlayer2Id!.Value))"
+                                                                   OnClick="@(() => SetSemiBWinner(finalsBracket.SemifinalsBPlayer2Id!.Value))"
                                                                    EndIcon="@Icons.Material.Filled.CheckCircle"
                                                                    title="Definir como vencedor">
-                                                            @(finalsBracket.SemiBPlayer2Name ?? "—")
+                                                            @(finalsBracket.SemifinalsBPlayer2?.Name ?? "—")
                                                         </MudButton>
                                                     }
                                                 </MudStack>
@@ -225,7 +232,7 @@
                                             Final
                                         </MudText>
                                         <MudPaper Class="bracket-match pa-3" Elevation="2" Rounded="true">
-                                            @if (finalsBracket.FinalsPlayer1Name != null || finalsBracket.FinalsPlayer2Name != null)
+                                            @if (finalsBracket.FinalsPlayer1 != null || finalsBracket.FinalsPlayer2 != null)
                                             {
                                                 <MudStack Spacing="1">
                                                     @if (finalsBracket.FinalsPlayer1Id.HasValue)
@@ -236,7 +243,7 @@
                                                                    OnClick="@(() => SetChampion(finalsBracket.FinalsPlayer1Id!.Value))"
                                                                    EndIcon="@Icons.Material.Filled.EmojiEvents"
                                                                    title="Definir como campeão">
-                                                            @(finalsBracket.FinalsPlayer1Name ?? "—")
+                                                            @(finalsBracket.FinalsPlayer1?.Name ?? "—")
                                                         </MudButton>
                                                     }
                                                     @if (finalsBracket.FinalsPlayer2Id.HasValue)
@@ -247,7 +254,7 @@
                                                                    OnClick="@(() => SetChampion(finalsBracket.FinalsPlayer2Id!.Value))"
                                                                    EndIcon="@Icons.Material.Filled.EmojiEvents"
                                                                    title="Definir como campeão">
-                                                            @(finalsBracket.FinalsPlayer2Name ?? "—")
+                                                            @(finalsBracket.FinalsPlayer2?.Name ?? "—")
                                                         </MudButton>
                                                     }
                                                 </MudStack>
@@ -258,13 +265,13 @@
                                             }
                                         </MudPaper>
 
-                                        @if (!string.IsNullOrEmpty(finalsBracket.WinnerName))
+                                        @if (finalsBracket.WinnerId.HasValue)
                                         {
                                             <MudPaper Class="pa-4 mt-3" Elevation="3" Rounded="true" Style="background: linear-gradient(135deg, var(--mud-palette-success-lighten) 0%, var(--mud-palette-success) 100%);">
                                                 <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="2">
                                                     <MudIcon Icon="@Icons.Material.Filled.EmojiEvents" Color="Color.Surface" Size="Size.Large" />
                                                     <MudText Typo="Typo.h6" Style="color: var(--mud-palette-success-darken); font-weight: bold;">
-                                                        Campeão: @finalsBracket.WinnerName
+                                                        Campeão: @finalsBracket.Winner.Name
                                                     </MudText>
                                                 </MudStack>
                                             </MudPaper>
@@ -290,7 +297,7 @@
     private RoundView? selectedRound;
     private bool canGenerateNextRound;
     private bool lastRoundHasPendingMatches;
-    private FinalsBracketDisplay? finalsBracket;
+    private FinalsBracket? finalsBracket;
 
     protected override async Task OnInitializedAsync()
     {
@@ -437,6 +444,38 @@
 
         if (result is { Canceled: false })
             await LoadTournament();
+    }
+
+    private async Task ConfirmRemoveLastRound(Tournament tournament)
+    {
+        var parameters = new DialogParameters<ConfirmDialog>
+        {
+            { x => x.ContentText, $"Remover ultima rodada de '{tournament.Name}'?" },
+            { x => x.ButtonText, "Remover" },
+            { x => x.Color, Color.Error }
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            CloseButton = true,
+            BackdropClick = false,
+            MaxWidth = MaxWidth.ExtraSmall
+        };
+
+        var dialogReference = await DialogService.ShowAsync<ConfirmDialog>(
+            "Confirmar",
+            parameters,
+            options);
+
+        var result = await dialogReference.Result;
+
+        if (result is { Canceled: false })
+        {
+            await RoundService.DeleteLastRoundAsync(tournament.TournamentId);
+            await LoadTournament();
+        }
+
     }
 
     private async Task ConfirmRemovePlayer(Player player)
